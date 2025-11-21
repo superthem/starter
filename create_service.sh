@@ -34,8 +34,8 @@ fi
 cp -r "$clone_dir" "./${project_name}-service"
 
 # 遍历所有目录和文件，替换内容
-find "./${project_name}-service" -type f -exec sed -i "s/exampleaaa/${company_name}/g" {} \;
-find "./${project_name}-service" -type f -exec sed -i "s/exampleeee/${project_name}/g" {} \;
+find "./${project_name}-service" -type f -exec sed -i '' "s/exampleaaa/${company_name}/g" {} \;
+find "./${project_name}-service" -type f -exec sed -i '' "s/exampleeee/${project_name}/g" {} \;
 
 # 遍历所有目录，重命名目录
 find "./${project_name}-service" -depth -type d -name "*exampleaaa*" | while read -r dir; do
