@@ -49,15 +49,37 @@ find "./${project_name}-service" -type f | while read -r file; do
     fi
 done
 
-# 遍历所有目录，重命名目录
-find "./${project_name}-service" -depth -type d -name "*exampleaaa*" | while read -r dir; do
-    new_dir=$(echo "$dir" | sed "s/exampleaaa/${company_name}/g")
-    mv "$dir" "$new_dir"
+# 遍历所有目录，重命名目录（需要多次遍历直到没有更多匹配）
+# 先处理 exampleaaa
+while true; do
+    dirs_to_rename=$(find "./${project_name}-service" -depth -type d | grep "exampleaaa" || true)
+    if [ -z "$dirs_to_rename" ]; then
+        break
+    fi
+    echo "$dirs_to_rename" | while read -r dir; do
+        if [[ "$dir" == *"exampleaaa"* ]]; then
+            new_dir=$(echo "$dir" | sed "s/exampleaaa/${company_name}/g")
+            if [ "$dir" != "$new_dir" ]; then
+                mv "$dir" "$new_dir" 2>/dev/null || true
+            fi
+        fi
+    done
 done
 
-find "./${project_name}-service" -depth -type d -name "*exampleeee*" | while read -r dir; do
-    new_dir=$(echo "$dir" | sed "s/exampleeee/${project_name}/g")
-    mv "$dir" "$new_dir"
+# 再处理 exampleeee
+while true; do
+    dirs_to_rename=$(find "./${project_name}-service" -depth -type d | grep "exampleeee" || true)
+    if [ -z "$dirs_to_rename" ]; then
+        break
+    fi
+    echo "$dirs_to_rename" | while read -r dir; do
+        if [[ "$dir" == *"exampleeee"* ]]; then
+            new_dir=$(echo "$dir" | sed "s/exampleeee/${project_name}/g")
+            if [ "$dir" != "$new_dir" ]; then
+                mv "$dir" "$new_dir" 2>/dev/null || true
+            fi
+        fi
+    done
 done
 
 # 遍历所有文件，重命名文件名中包含变量的文件
