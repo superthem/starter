@@ -33,9 +33,21 @@ fi
 # 复制到当前目录并重命名
 cp -r "$clone_dir" "./${project_name}-application"
 
-# 遍历所有目录和文件，替换内容
-find "./${project_name}-application" -type f -exec sed -i "s/exampleaaa/${company_name}/g" {} \;
-find "./${project_name}-application" -type f -exec sed -i "s/exampleeee/${project_name}/g" {} \;
+# 遍历所有文件，只对文本文件替换内容（排除二进制文件）
+find "./${project_name}-application" -type f | while read -r file; do
+    # 使用 file 命令检查是否为文本文件，排除二进制文件
+    if file "$file" | grep -qE "(text|ASCII|UTF-8|empty)"; then
+        # 使用 LC_ALL=C 避免编码问题，2>/dev/null 忽略错误
+        # macOS 上 sed -i 需要加 '' 参数
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+            LC_ALL=C sed -i '' "s/exampleaaa/${company_name}/g" "$file" 2>/dev/null
+            LC_ALL=C sed -i '' "s/exampleeee/${project_name}/g" "$file" 2>/dev/null
+        else
+            LC_ALL=C sed -i "s/exampleaaa/${company_name}/g" "$file" 2>/dev/null
+            LC_ALL=C sed -i "s/exampleeee/${project_name}/g" "$file" 2>/dev/null
+        fi
+    fi
+done
 
 # 遍历所有目录，重命名目录
 find "./${project_name}-application" -depth -type d -name "*exampleaaa*" | while read -r dir; do
@@ -46,6 +58,21 @@ done
 find "./${project_name}-application" -depth -type d -name "*exampleeee*" | while read -r dir; do
     new_dir=$(echo "$dir" | sed "s/exampleeee/${project_name}/g")
     mv "$dir" "$new_dir"
+done
+
+# 遍历所有文件，重命名文件名中包含变量的文件
+find "./${project_name}-application" -type f -name "*exampleaaa*" | while read -r file; do
+    dir=$(dirname "$file")
+    filename=$(basename "$file")
+    new_filename=$(echo "$filename" | sed "s/exampleaaa/${company_name}/g")
+    mv "$file" "$dir/$new_filename"
+done
+
+find "./${project_name}-application" -type f -name "*exampleeee*" | while read -r file; do
+    dir=$(dirname "$file")
+    filename=$(basename "$file")
+    new_filename=$(echo "$filename" | sed "s/exampleeee/${project_name}/g")
+    mv "$file" "$dir/$new_filename"
 done
 
 echo "脚本执行完成！项目已创建为 ${project_name}-application。"
