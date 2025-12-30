@@ -31,7 +31,7 @@
 ## 注意事项
 
 1. 确保您的系统已安装 `git` 和 `bash`。
-2. 脚本默认克隆的代码仓库地址为 `http://home.magicvector.cn:30080/common/`。
+2. 脚本默认克隆的代码仓库地址为 `https://github.com/superthem/example-xxx.git`。
 3. 临时文件默认保存在系统的 `Downloads` 目录下。
 
 ## 示例

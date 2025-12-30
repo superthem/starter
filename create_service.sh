@@ -22,7 +22,7 @@ else
 fi
 
 # 克隆代码到固定目录
-git clone http://home.magicvector.cn:30080/common/example-service.git "$clone_dir"
+git clone https://github.com/superthem/example-service.git "$clone_dir"
 
 # 检查克隆是否成功
 if [ $? -ne 0 ]; then
